@@ -44,13 +44,20 @@ async function generateQuiz(topic, numQuestions = 5) {
       "id": 1,
       "type": "mcq",
       "question": "question text",
-      "options": ["A", "B", "C", "D"],
-      "correctAnswer": "A",
+      "options": ["Option A text", "Option B text", "Option C text", "Option D text"],
+      "correctAnswer": "Option A text",
       "explanation": "why this is correct"
     }
   ]
 }
-Generate ${numQuestions} questions. Mix MCQ (4 options) and short answer types. For short answer, set type to "short_answer", omit options, and set correctAnswer to the expected answer. Make questions progressively harder.`;
+
+IMPORTANT RULES:
+- Generate exactly ${numQuestions} questions, ALL must be multiple choice (type: "mcq")
+- Each question must have exactly 4 options
+- The "correctAnswer" field MUST be the EXACT same string as one of the options (copy-paste the option text exactly)
+- Make questions progressively harder
+- Do NOT generate short answer or open-ended questions
+- Ensure each question has a clear, unambiguous correct answer`;
 
     const m = getModel();
     if (!m) {
@@ -72,7 +79,9 @@ function getDefaultQuiz(topic) {
         questions: [
             { id: 1, type: 'mcq', question: `What is the primary concept behind ${topic}?`, options: ['Concept A', 'Concept B', 'Concept C', 'Concept D'], correctAnswer: 'Concept A', explanation: 'Configure GEMINI_API_KEY for real quizzes.' },
             { id: 2, type: 'mcq', question: `Which data structure is commonly associated with ${topic}?`, options: ['Array', 'Tree', 'Graph', 'Stack'], correctAnswer: 'Array', explanation: 'Configure GEMINI_API_KEY for real quizzes.' },
-            { id: 3, type: 'short_answer', question: `Explain the time complexity of ${topic} in one sentence.`, correctAnswer: 'O(n)', explanation: 'Configure GEMINI_API_KEY for real quizzes.' },
+            { id: 3, type: 'mcq', question: `What is the typical time complexity of ${topic}?`, options: ['O(1)', 'O(n)', 'O(log n)', 'O(n²)'], correctAnswer: 'O(n)', explanation: 'Configure GEMINI_API_KEY for real quizzes.' },
+            { id: 4, type: 'mcq', question: `Which programming paradigm is most relevant to ${topic}?`, options: ['Object-Oriented', 'Functional', 'Procedural', 'Declarative'], correctAnswer: 'Object-Oriented', explanation: 'Configure GEMINI_API_KEY for real quizzes.' },
+            { id: 5, type: 'mcq', question: `What is a common application of ${topic}?`, options: ['Web Development', 'Database Management', 'Algorithm Design', 'Network Security'], correctAnswer: 'Algorithm Design', explanation: 'Configure GEMINI_API_KEY for real quizzes.' },
         ]
     };
 }
@@ -85,14 +94,26 @@ async function analyzeCode(code, language) {
     {
       "line": 1,
       "type": "syntax|logic|runtime|style",
-      "message": "description of the error",
-      "fix": "how to fix it"
+      "message": "short description of the error",
+      "errorLine": "the exact source code text on that line that has the error",
+      "fix": "the corrected version of that line",
+      "details": [
+        "Bullet point 1 explaining the issue in detail",
+        "Bullet point 2 explaining why this is problematic",
+        "Bullet point 3 suggesting the correct approach"
+      ]
     }
   ],
   "suggestions": ["suggestion 1", "suggestion 2"],
   "optimizedCode": "the corrected and optimized version of the code",
-  "explanation": "overall explanation of what was found and fixed"
+  "explanation": "A markdown summary with bullet points explaining all issues found"
 }
+
+IMPORTANT:
+- For each error, include the "errorLine" field with the EXACT source code text from that line
+- For each error, include a "details" array with 2-3 bullet points explaining the issue
+- The "fix" field should show the corrected version of that specific line
+- Be thorough but concise in explanations
 
 Code to analyze:
 \`\`\`${language}
