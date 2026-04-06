@@ -3,6 +3,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import { AnimatePresence, motion } from 'framer-motion';
 import Navbar from './components/Navbar';
+import ProtectedRoute from './components/ProtectedRoute';
 import LandingPage from './pages/LandingPage';
 import ChatPage from './pages/ChatPage';
 import DashboardPage from './pages/DashboardPage';
@@ -24,14 +25,17 @@ function AnimatedRoutes() {
     <AnimatePresence mode="wait">
       <motion.div key={location.pathname} variants={pageVariants} initial="initial" animate="animate" exit="exit" style={{ minHeight: '100vh' }}>
         <Routes location={location}>
+          {/* Public routes */}
           <Route path="/" element={<LandingPage />} />
-          <Route path="/chat" element={<ChatPage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/quiz" element={<QuizPage />} />
-          <Route path="/code-analyzer" element={<CodeAnalyzerPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
+
+          {/* Protected routes — must be logged in */}
+          <Route path="/chat" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
+          <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+          <Route path="/quiz" element={<ProtectedRoute><QuizPage /></ProtectedRoute>} />
+          <Route path="/code-analyzer" element={<ProtectedRoute><CodeAnalyzerPage /></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
         </Routes>
       </motion.div>
     </AnimatePresence>
@@ -50,3 +54,4 @@ export default function App() {
     </ThemeProvider>
   );
 }
+

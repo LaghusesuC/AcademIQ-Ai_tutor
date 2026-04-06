@@ -23,23 +23,31 @@ export function AuthProvider({ children }) {
         }
     }, [token]);
 
-    const login = async (email, password) => {
-        const res = await api.post('/auth/login', { email, password });
-        const { token: newToken, ...userData } = res.data;
+    const _persistSession = (newToken, userData) => {
         localStorage.setItem('token', newToken);
         api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
         setToken(newToken);
         setUser(userData);
+    };
+
+    const login = async (email, password) => {
+        const res = await api.post('/auth/login', { email, password });
+        const { token: newToken, ...userData } = res.data;
+        _persistSession(newToken, userData);
         return userData;
     };
 
     const register = async (name, email, password) => {
         const res = await api.post('/auth/register', { name, email, password });
         const { token: newToken, ...userData } = res.data;
-        localStorage.setItem('token', newToken);
-        api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
-        setToken(newToken);
-        setUser(userData);
+        _persistSession(newToken, userData);
+        return userData;
+    };
+
+    const loginWithGoogle = async (credentialResponse) => {
+        const res = await api.post('/auth/google', { credential: credentialResponse.credential });
+        const { token: newToken, ...userData } = res.data;
+        _persistSession(newToken, userData);
         return userData;
     };
 
@@ -51,7 +59,7 @@ export function AuthProvider({ children }) {
     };
 
     return (
-        <AuthContext.Provider value={{ user, token, loading, login, register, logout, isAuthenticated: !!user }}>
+        <AuthContext.Provider value={{ user, token, loading, login, register, loginWithGoogle, logout, isAuthenticated: !!user }}>
             {children}
         </AuthContext.Provider>
     );

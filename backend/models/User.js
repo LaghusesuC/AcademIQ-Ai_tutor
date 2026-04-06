@@ -19,9 +19,17 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: [true, 'Password is required'],
+    required: false,
     minlength: 6,
     select: false
+  },
+  googleId: {
+    type: String,
+    sparse: true,
+    unique: true
+  },
+  avatar: {
+    type: String
   },
   learningProgress: {
     type: Map,
@@ -41,7 +49,7 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
+  if (!this.isModified('password') || !this.password) return next();
   const salt = await bcrypt.genSalt(12);
   this.password = await bcrypt.hash(this.password, salt);
   next();
