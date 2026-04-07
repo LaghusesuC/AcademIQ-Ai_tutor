@@ -27,7 +27,7 @@ export default function ProfilePage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen pt-24 flex items-center justify-center">
+            <div className="min-h-screen pt-24 flex items-center justify-center ">
                 <div className="w-10 h-10 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: '#818cf8', borderTopColor: 'transparent' }} />
             </div>
         );
